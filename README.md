@@ -298,3 +298,17 @@ function App() {
 
 export default App;
 ```
+
+# Vite - (branch 02-useState)
+
+Vite에서 실행은 `npm run dev` 를 사용
+
+.eslintrc.json rules에 아래항목 추가
+
+```json
+"rules": {
+"no-undef": "error",
+"no-unused-vars": "warn",
+"react/prop-types": "off", // 기본값은 "error"
+}
+```

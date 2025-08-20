@@ -23,6 +23,8 @@
       { "allowConstantExport": true }
     ],
     "react-hooks/exhaustive-deps": "off",
+    "no-undef": "error",
+    "no-unused-vars": "warn",
     "react/prop-types": "warn" // 기본값은 "error"
   }
 }
