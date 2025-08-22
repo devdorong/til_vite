@@ -1,5 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 프로젝트 공통 유틸(선택) */
 :root {
-  --app-max-w: 640px;
+  --app-max-w: 720px;
 }
 
 html,

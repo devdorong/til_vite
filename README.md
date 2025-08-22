@@ -1,314 +1,132 @@
-# useState 상태
+# Tailwind
 
-## 폴더 및 파일 구조
+## 1. 환경 구성
 
-- /src/components 폴더 생성
-- /src/components/todos 폴더 생성
-- /src/components/todos/TodoWrite.jsx 파일 생성
+- 안정화 버전으로 진행
 
-```jsx
-import { useState } from "react";
-
-const TodoWrite = ({ handleTodoAdd }) => {
-  // js 자리
-  const [title, setTitle] = useState("");
-  const handleKeyDown = e => {
-    if (e.key === "Enter") {
-      handleSave();
-    }
-  };
-  const handleSave = () => {
-    if (title.trim()) {
-      //console.log("새로운 할일 추가");
-      const newTodo = {
-        id: Date.now().toString(),
-        title: title,
-        completed: false,
-      };
-      handleTodoAdd(newTodo);
-      setTitle("");
-    }
-  };
-  // jsx 자리
-  return (
-    <div>
-      <input
-        type="text"
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
-      <button onClick={handleSave}>등록</button>
-    </div>
-  );
-};
-
-export default TodoWrite;
+```bash
+npm i -D tailwindcss@3.4.10 postcss@8.4.38 autoprefixer@10.4.20
 ```
 
-- /src/components/todos/TodoList.jsx 파일 생성
+- 만약 prettier 가 셋팅되었다면 추가 설치 필요
 
-```jsx
-import { useState } from "react";
-import TodoItem from "./TodoItem";
-
-const TodoList = ({
-  todos,
-
-  editId,
-  setEditId,
-
-  handleTodoEdit,
-  handleTodoDelete,
-  handleTodoToggle,
-}) => {
-  // js 자리
-  // 어느 id 를 편집 중인지 보관
-  // const [editId, setEditId] = useState(null);
-  // 현재 편집을 시작했는지
-  const onEdit = id => {
-    console.log("현재 편집 중인 ID : ", id);
-    setEditId(id);
-  };
-  // 현재 편집을 취소했는지
-  const onCancel = () => {
-    setEditId(null);
-  };
-  // 현재 편집을 완료하고 저장했는지
-  const onSaveEdit = (id, newTitle) => {
-    handleTodoEdit(id, newTitle);
-    setEditId(null);
-  };
-
-  // 누가 toggle 했는지 처리
-  const onToggle = id => {
-    handleTodoToggle(id);
-    if (editId === id) {
-      setEditId(null);
-    }
-  };
-
-  // 삭제 했을 때
-  const onDelete = id => {
-    handleTodoDelete(id);
-    if (editId === id) {
-      setEditId(null);
-    }
-  };
-
-  // jsx 자리
-  return (
-    <div>
-      <h2>할일 목록</h2>
-      <div>
-        <ul>
-          {todos.map(item => (
-            <TodoItem
-              key={item.id}
-              todo={item}
-              // 아래는 true 아니면 false 전달
-              isEdit={item.id === editId}
-              onEdit={onEdit}
-              onCancel={onCancel}
-              onSaveEdit={onSaveEdit}
-              onDelete={onDelete}
-              onToggle={onToggle}
-            />
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-};
-
-export default TodoList;
+```bash
+npm i -D prettier@3.3.3 prettier-plugin-tailwindcss@0.6.8
 ```
 
-- /src/components/todos/TodoItem.jsx 파일 생성
+## 2. 기본 환경 파일 자동 생성
 
-```jsx
-import { useEffect, useState } from "react";
-
-const TodoItem = ({
-  todo,
-  isEdit, //  true, false
-  onEdit,
-  onCancel,
-  onSaveEdit,
-  onDelete,
-  onToggle,
-}) => {
-  // js 자리
-  const [editTitle, setEditTitle] = useState(todo.title);
-
-  // isEdit 이 true 이면 계속 업데이트
-  // isEdit 이 true 이면 todo.title 을 계속 업데이트
-  useEffect(() => {
-    if (isEdit) {
-      setEditTitle(todo.title);
-    }
-  }, [isEdit, todo.title]);
-
-  const handleToggle = () => {
-    // console.log(todo.id, "번의 complted 가 변경됨");
-    onToggle(todo.id);
-  };
-  const handleEdit = () => {
-    onEdit(todo.id);
-  };
-  const handleDelete = () => {
-    // console.log(todo.id, "번이 삭제됨");
-    onDelete(todo.id);
-  };
-  const handleEditKeyDown = e => {
-    if (e.key === "Enter") {
-      handleEditSave();
-    }
-  };
-  const handleEditSave = () => {
-    if (editTitle.trim()) {
-      // 실제로 todos 의 목록에 업데이트 진행
-      //console.log(todo.id, "번이 업데이트됨", editTitle, "으로 변경필요");
-      onSaveEdit(todo.id, editTitle);
-    }
-  };
-  const handleEditCancel = () => {
-    // 취소했으므로 원본 데이터로 다시 복구
-    setEditTitle(todo.title);
-    onCancel();
-  };
-
-  const liStyle = {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    color: todo.completed ? "gray" : "red",
-  };
-  const titleStyle = {
-    textDecoration: todo.completed ? "line-through" : "none",
-  };
-
-  // jsx 자리
-  return (
-    <li style={liStyle}>
-      {isEdit ? (
-        <>
-          <input
-            type="text"
-            value={editTitle}
-            onChange={e => setEditTitle(e.target.value)}
-            onKeyDown={handleEditKeyDown}
-          />
-          <button onClick={handleEditSave}>저장</button>
-          <button onClick={handleEditCancel}>취소</button>
-        </>
-      ) : (
-        <>
-          <input
-            type="checkbox"
-            checked={todo.completed}
-            onChange={handleToggle}
-          />
-          <span style={titleStyle}>{todo.title}</span>
-          <button onClick={handleEdit}>수정</button>
-          <button onClick={handleDelete}>삭제</button>
-        </>
-      )}
-    </li>
-  );
-};
-
-export default TodoItem;
+```bash
+npx tailwindcss init -p
 ```
 
-- App.jsx
+## 3. 생성된 파일 살펴보기
 
-```jsx
-import { useEffect, useState } from "react";
-import TodoList from "./components/todos/TodoList";
-import TodoWrite from "./components/todos/TodoWrite";
+- tailwind.config.js : Tailwind 옵션, 기능 등 설정
 
-// 더미 데이터
-const initialTodos = [
-  { id: "1", title: "할일 1", completed: false },
-  { id: "2", title: "할일 2", completed: true },
-  { id: "3", title: "할일 3", completed: true },
-  { id: "4", title: "할일 4", completed: false },
-  { id: "5", title: "할일 5", completed: true },
-];
+```js
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: "class",
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          DEFAULT: "#4f46e5",
+          50: "#eef2ff",
+          100: "#e0e7ff",
+          200: "#c7d2fe",
+          300: "#a5b4fc",
+          400: "#818cf8",
+          500: "#6366f1",
+          600: "#4f46e5",
+          700: "#4338ca",
+          800: "#3730a3",
+          900: "#312e81",
+        },
+      },
+      boxShadow: {
+        card: "0 2px 10px rgba(0,0,0,0.08)",
+      },
+      borderRadius: {
+        xl2: "1rem",
+      },
+    },
+  },
+  plugins: [],
+};
+```
 
-function App() {
-  // js 자리
-  // 1. 할일 목록 상태관리
-  const [todos, setTodos] = useState([]);
-  // 편집 중인 ID 를 관리함.
-  const [editId, setEditId] = useState(null);
+- postcss.config.js : 웹 브라우저에서의 호환성 셋팅
 
-  const handleTodoAdd = newTodo => {
-    // prev 현재 최신 state 를 참조 업데이트
-    // setTodos( prev => [newTodo, ...prev]);
+```js
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+```
 
-    const arr = [newTodo, ...todos];
-    setTodos(arr);
+## 4. index.css 설정
 
-    // 편집중인 ID 비움
-    setEditId(null);
-  };
-  const handleTodoEdit = (id, title) => {
-    const arr = todos.map(item =>
-      item.id === id ? { ...item, title: title } : item,
-    );
-    setTodos(arr);
-  };
-  const handleTodoDelete = id => {
-    const arr = todos.filter(item => item.id !== id);
-    setTodos(arr);
-  };
-  const handleTodoToggle = id => {
-    const arr = todos.map(item =>
-      item.id === id ? { ...item, completed: !item.completed } : item,
-    );
-    setTodos(arr);
-  };
+- Tailwind 사용하도록 설정
+- /src/index.css
 
-  // 2. 실제로 데이터는 DB 에서 비동기로 옮
-  useEffect(() => {
-    // 비동기로 진행할 필요 있음.
-    setTodos(initialTodos);
-  }, []);
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  // jsx 자리
-  return (
-    <div>
-      <h1>할일 앱 서비스</h1>
-      <div>
-        <TodoWrite handleTodoAdd={handleTodoAdd} />
-        <TodoList
-          todos={todos}
-          editId={editId}
-          setEditId={setEditId}
-          handleTodoEdit={handleTodoEdit}
-          handleTodoDelete={handleTodoDelete}
-          handleTodoToggle={handleTodoToggle}
-        />
-      </div>
-    </div>
-  );
+/* 프로젝트 공통 유틸(선택) */
+:root {
+  --app-max-w: 720px;
 }
 
-export default App;
-```
+html,
+body,
+#root {
+  height: 100%;
+}
 
-# Vite - (branch 02-useState)
-
-Vite에서 실행은 `npm run dev` 를 사용
-
-.eslintrc.json rules에 아래항목 추가
-
-```json
-"rules": {
-"no-undef": "error",
-"no-unused-vars": "warn",
-"react/prop-types": "off", // 기본값은 "error"
+.container-app {
+  @apply mx-auto max-w-[var(--app-max-w)] px-4;
 }
 ```
+
+## 5. index.css 사용 확인
+
+- main.jsx
+
+```jsx
+import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
+import "./index.css"; // Tailwind 사용시 반드시 설정확인
+
+createRoot(document.getElementById("root")).render(<App />);
+```
+
+## 6. 팁
+
+- 만약 적용되지 않는 경우 VSCode 재실행
+- 입력태그 포커스 활성 및 커서위치 조절
+
+```jsx
+const inputRef = useRef(null);
+useEffect(() => {
+  if (isEdit && inputRef.current) {
+    inputRef.current.focus();
+    // 커서를 글자에 마지막으로 보내기
+    const element = inputRef.current;
+    const len = element.value.length;
+    try {
+      element.setSelectionRange(len, len);
+    } catch {
+      console.log("에러에요");
+    }
+  }
+}, [isEdit]);
+```
+
+## 7. 적용 예

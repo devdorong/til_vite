@@ -1,68 +1,36 @@
+import { useTodos } from "../../contexts/todos/useTodos";
 import TodoItem from "./TodoItem";
 
-const TodoList = ({
-  todos,
-
-  editId,
-  setEditId,
-
-  handleTodoEdit,
-  handleTodoDelete,
-  handleTodoToggle,
-}) => {
+const TodoList = ({ onEndEdit, onStartEdit, editId }) => {
   // js 자리
-  // 어느 id 를 편집 중인지 보관
-  // const [editId, setEditId] = useState(null);
-  // 현재 편집을 시작했는지
-  const onEdit = id => {
-    console.log("현재 편집 중인 ID : ", id);
-    setEditId(id);
-  };
-  // 현재 편집을 취소했는지
-  const onCancel = () => {
-    setEditId(null);
-  };
-  // 현재 편집을 완료하고 저장했는지
-  const onSaveEdit = (id, newTitle) => {
-    handleTodoEdit(id, newTitle);
-    setEditId(null);
-  };
-
-  // 누가 toggle 했는지 처리
-  const onToggle = id => {
-    handleTodoToggle(id);
-    if (editId === id) {
-      setEditId(null);
-    }
-  };
-
-  // 삭제 했을 때
-  const onDelete = id => {
-    handleTodoDelete(id);
-    if (editId === id) {
-      setEditId(null);
-    }
-  };
+  const { todos } = useTodos();
 
   // jsx 자리
   return (
     <div>
-      <h2>할일 목록</h2>
-      <div>
-        <ul>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-base font-semibold">할일 목록</h2>
+        <span className="text-xs text-neutral-500 dark:text-neutral-400">
+          총 {todos.length}개
+        </span>
+      </div>
+      <div className="w-full relative">
+        <ul className="space-y-2">
           {todos.map(item => (
             <TodoItem
               key={item.id}
               todo={item}
-              // 아래는 true 아니면 false 전달
-              isEdit={item.id === editId}
-              onEdit={onEdit}
-              onCancel={onCancel}
-              onSaveEdit={onSaveEdit}
-              onDelete={onDelete}
-              onToggle={onToggle}
+              // 하나만 편집이 가능하도록 구성
+              editId={editId}
+              onStartEdit={onStartEdit}
+              onEndEdit={onEndEdit}
             />
           ))}
+          {todos.length === 0 && (
+            <li className="rounded-xl border border-dashed border-neutral-300 p-6 text-center text-sm text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
+              아직 등록된 할일이 없습니다.
+            </li>
+          )}
         </ul>
       </div>
     </div>

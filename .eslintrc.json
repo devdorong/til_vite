@@ -15,16 +15,14 @@
     "prettier"
   ],
   "settings": { "react": { "version": "detect" } },
-  // rules는 필요한 경우 추가
   "rules": {
+    "no-undef": "error",
+    "no-unused-vars": "warn",
     "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
     "react-refresh/only-export-components": [
       "warn",
       { "allowConstantExport": true }
-    ],
-    "react-hooks/exhaustive-deps": "off",
-    "no-undef": "error",
-    "no-unused-vars": "warn",
-    "react/prop-types": "warn" // 기본값은 "error"
+    ]
   }
 }
