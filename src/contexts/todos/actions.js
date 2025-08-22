@@ -7,3 +7,4 @@ export const editTodo = (id, title) => ({
 });
 export const toggleTodo = id => ({ type: ACTIONS.TOGGLE, payload: { id } });
 export const deleteTodo = id => ({ type: ACTIONS.DELETE, payload: { id } });
+

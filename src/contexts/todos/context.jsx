@@ -1,7 +1,7 @@
 import { createContext, useReducer } from "react";
-import { reducer } from "./reducer";
-import { initialState } from "./initialState";
 import { addTodo, deleteTodo, editTodo, toggleTodo } from "./actions";
+import { initialState } from "./initialState";
+import { reducer } from "./reducer";
 
 export const TodoContext = createContext();
 
@@ -15,6 +15,7 @@ export function TodoProvider({ children }) {
     edit: (id, title) => dispatch(editTodo(id, title)),
     toggle: id => dispatch(toggleTodo(id)),
     remove: id => dispatch(deleteTodo(id)),
+    find: id => state.todos.find(item => item.id === id),
   };
 
   // 외부로 노출할 내용 객체
@@ -24,6 +25,7 @@ export function TodoProvider({ children }) {
     deleteTodo: actions.remove,
     toggleTodo: actions.toggle,
     editTodo: actions.edit,
+    findTodo: actions.find,
   };
 
   return <TodoContext.Provider value={value}>{children}</TodoContext.Provider>;

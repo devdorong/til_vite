@@ -1,7 +1,7 @@
 import { useTodos } from "../../contexts/todos/useTodos";
 import TodoItem from "./TodoItem";
 
-const TodoList = ({ onEndEdit, onStartEdit, editId }) => {
+const TodoList = () => {
   // js 자리
   const { todos } = useTodos();
 
@@ -17,14 +17,7 @@ const TodoList = ({ onEndEdit, onStartEdit, editId }) => {
       <div className="w-full relative">
         <ul className="space-y-2">
           {todos.map(item => (
-            <TodoItem
-              key={item.id}
-              todo={item}
-              // 하나만 편집이 가능하도록 구성
-              editId={editId}
-              onStartEdit={onStartEdit}
-              onEndEdit={onEndEdit}
-            />
+            <TodoItem key={item.id} todo={item} />
           ))}
           {todos.length === 0 && (
             <li className="rounded-xl border border-dashed border-neutral-300 p-6 text-center text-sm text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
